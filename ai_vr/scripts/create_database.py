@@ -10,7 +10,7 @@ from datetime import datetime, date
 from pathlib import Path
 
 class VRDatabaseManager:
-    def __init__(self, db_path="vr_database.db"):
+    def __init__(self, db_path="ai_vr/db/vr_database.db"):
         """Inicializa o gerenciador do banco de dados"""
         self.db_path = db_path
         self.conn = None
@@ -39,7 +39,7 @@ class VRDatabaseManager:
         """Cria o schema do banco de dados"""
         print("📋 Criando schema do banco...")
         
-        with open('database_schema.sql', 'r', encoding='utf-8') as f:
+    with open('ai_vr/db/database_schema.sql', 'r', encoding='utf-8') as f:
             schema = f.read()
         
         self.cursor.executescript(schema)
@@ -445,7 +445,7 @@ def main():
     print("=" * 60)
     
     # Criar e popular o banco
-    db_manager = VRDatabaseManager("vr_database.db")
+    db_manager = VRDatabaseManager("ai_vr/db/vr_database.db")
     
     try:
         db_manager.populate_all()

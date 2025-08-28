@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 
 class VRDatabaseConnection:
-    def __init__(self, db_path="vr_database.db"):
+    def __init__(self, db_path="ai_vr/db/vr_database.db"):
         """Inicializa a conexão com o banco de dados"""
         self.db_path = db_path
         self.conn = None
@@ -248,7 +248,7 @@ def main():
     print("=" * 60)
     
     # Conectar ao banco
-    db_conn = VRDatabaseConnection("vr_database.db")
+    db_conn = VRDatabaseConnection("ai_vr/db/vr_database.db")
     
     try:
         db_conn.connect()

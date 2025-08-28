@@ -1,4 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# Local env files
 .env
-vr_database.db
-.venv
+*.env
+
+# Generated spreadsheets / outputs
+data/VR_MENSAL_GERADO*.xlsx
+
+# Backups (opcional)
 backups/

@@ -14,13 +14,13 @@ def demo_sistema_completo():
     print("=" * 80)
     
     # Verificar se o banco existe
-    if not os.path.exists("vr_database.db"):
+    db_path = "ai_vr/db/vr_database.db"
+    if not os.path.exists(db_path):
         print("❌ Banco de dados não encontrado!")
         print("💡 Execute primeiro: python3 create_database.py")
         return
-        
     # Conectar ao banco
-    conn = sqlite3.connect("vr_database.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
     print("✅ Conectado ao banco de dados")
@@ -30,8 +30,8 @@ def demo_sistema_completo():
     print("-" * 40)
     
     # Tamanho do banco
-    file_size = os.path.getsize("vr_database.db")
-    print(f"📁 Arquivo: vr_database.db")
+    file_size = os.path.getsize(db_path)
+    print(f"📁 Arquivo: {db_path}")
     print(f"📏 Tamanho: {file_size:,} bytes ({file_size/1024/1024:.2f} MB)")
     
     # Contagem de registros

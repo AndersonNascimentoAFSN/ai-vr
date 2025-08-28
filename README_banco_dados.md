@@ -2,22 +2,13 @@
 
 ## 📋 Visão Geral
 
-Este diretório contém todos os arquivos necessários para criar, gerenciar e consultar o banco de dados SQLite3 do sistema de VR/VA. O banco foi projetado para armazenar todas as informações das planilhas Excel e permitir consultas eficientes para o cálculo automatizado de VR.
+ Este diretório contém todos os arquivos necessários para criar, gerenciar e consultar o banco de dados SQLite3 do sistema de VR/VA. O banco foi projetado para armazenar todas as informações das planilhas Excel e permitir consultas eficientes para o cálculo automatizado de VR. O script `demo_sistema.py` foi movido para o diretório `ai_vr/scripts` para melhor organização.
 
 ## 📁 Arquivos do Sistema
 
 ### **Arquivos Principais**
-- **`database_schema.sql`** - Schema completo do banco de dados
-- **`create_database.py`** - Script para criar e popular o banco
-- **`database_connect.py`** - Script para conectar e consultar o banco
-- **`database_backup.py`** - Sistema de backup e restore
-- **`README_banco_dados.md`** - Este arquivo de documentação
-
 ### **Arquivos de Desenvolvimento**
 - **`database_populate.py`** - Script original para população (memória)
-- **`database_queries.py`** - Consultas de exemplo (memória)
-- **`README_database.md`** - Documentação técnica do modelo
-
 ## 🚀 Como Usar
 
 ### **1. Criar o Banco de Dados**

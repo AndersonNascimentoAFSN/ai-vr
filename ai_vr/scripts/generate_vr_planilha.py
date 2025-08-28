@@ -5,18 +5,20 @@ e nas regras descritas em doc/DOCUMENTACAO_VR_VA.md.
 
 Uso:
   python3 generate_vr_planilha.py \
-    --db /home/andersonnascimento/develop/github/projects/ai_vr/vr_database.db \
+    --db ai_vr/db/vr_database.db \
     --inicio 2025-04-15 \
     --fim 2025-05-15 \
     --saida /home/andersonnascimento/develop/github/projects/ai_vr/data/VR_MENSAL_GERADO.xlsx
 """
+
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="pandas")
 
 import argparse
 import os
 import sqlite3
 from dataclasses import dataclass
 from datetime import date, datetime
-
 import pandas as pd
 
 
@@ -39,8 +41,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Gerador da planilha VR mensal a partir do banco")
     parser.add_argument(
         "--db",
-        default="/home/andersonnascimento/develop/github/projects/ai_vr/vr_database.db",
-        help="Caminho do arquivo SQLite do banco (vr_database.db)",
+    default="ai_vr/db/vr_database.db",
+    help="Caminho do arquivo SQLite do banco (ai_vr/db/vr_database.db)",
     )
     parser.add_argument(
         "--inicio",
@@ -197,7 +199,7 @@ def montar_base_elegivel(bases: dict, periodo: PeriodoReferencia) -> pd.DataFram
         )
     else:
         col["flag_excluido"] = False
-    col["flag_excluido"] = col["flag_excluido"].fillna(False)
+    col["flag_excluido"] = col["flag_excluido"].fillna(False).infer_objects(copy=False)
 
     # Afastamentos: marcar quem tem overlap com o período
     afast = bases["afastamentos"].copy()
@@ -214,7 +216,7 @@ def montar_base_elegivel(bases: dict, periodo: PeriodoReferencia) -> pd.DataFram
                         on="colaborador_id", how="left")
     else:
         col["flag_afastado"] = False
-    col["flag_afastado"] = col["flag_afastado"].fillna(False)
+    col["flag_afastado"] = col["flag_afastado"].fillna(False).infer_objects(copy=False)
 
     # Regras de categoria de cargo (excluir estagiário/aprendiz/diretor)
     col["flag_categoria_excluida"] = col["categoria_cargo"].isin(["ESTAGIARIO", "APRENDIZ", "DIRETOR"]) \

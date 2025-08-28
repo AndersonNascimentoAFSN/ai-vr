@@ -1,96 +1,112 @@
-# Automação de Benefícios VR/VA com LangChain
 
-Este projeto automatiza o cálculo de benefícios VR/VA usando:
-- Banco SQLite existente
-- Scripts prontos de carga e exportação
-- Agentes orquestrados com LangChain
+# Automação de Benefícios VR/VA com Agentes Inteligentes
 
-## Estrutura
-- `generate_vr_planilha.py`: script existente usado para ler o banco e gerar base de cálculo e exportação (sem aba de validações)
-- `automation/agents/db_agent.py`: agente para consultas SQL via LangChain
-- `automation/agents/convencao_agent.py`: aplica regras da convenção coletiva sobre o DataFrame
-- `automation/agents/export_agent.py`: consolida e exporta usando o script existente
-- `automation/processar.py`: função `processar_beneficios` que orquestra tudo
+Este projeto automatiza o cálculo, validação e exportação dos benefícios de Vale Refeição (VR) e Vale Alimentação (VA) para colaboradores, integrando dados de banco SQLite, regras de convenção coletiva e agentes inteligentes (LangChain).
+
+## O que o projeto faz?
+
+1. **Cria e Popula o Banco de Dados**
+    - Inicializa o banco SQLite com schema completo e dados das planilhas (colaboradores, sindicatos, cargos, férias, afastamentos, etc).
+    - Scripts automatizados garantem que o banco esteja sempre atualizado e íntegro.
+
+2. **Processa os Benefícios VR/VA**
+    - Orquestrador executa todas as etapas: consulta, cálculo, aplicação de regras e exportação.
+    - Recebe regras da convenção coletiva em JSON, permitindo ajustes dinâmicos por categoria, sindicato, limites, descontos, etc.
+
+3. **Agentes Inteligentes**
+    - **DatabaseAgent**: Realiza consultas SQL e integra com LLM (LangChain/OpenAI) para análises avançadas.
+    - **ExportAgent**: Gera a base de cálculo dos benefícios consolidando dados do banco.
+    - **ConvencaoAgent**: Aplica regras da convenção coletiva sobre os dados, ajustando valores, descontos e exceções.
+
+4. **Exporta Relatórios**
+    - Gera planilhas Excel prontas para uso em RH, financeiro ou auditoria.
+    - Exportação automatizada e validada.
+
+## Fluxo de Execução
+
+1. **Verificação e Criação do Banco**
+    - O sistema verifica se o banco existe. Se não, cria e popula automaticamente.
+
+2. **Processamento dos Benefícios**
+    - O orquestrador executa a função principal, processando os dados conforme regras da convenção.
+
+3. **Aplicação das Regras**
+    - Agentes aplicam regras específicas de negócio, incluindo exceções e limites definidos pelo usuário.
+
+4. **Exportação**
+    - Os dados finais são exportados para uma planilha Excel.
+
+## Estrutura do Projeto
+
+- `ai_vr/core/processar.py`: Orquestrador principal do fluxo de cálculo e exportação.
+- `ai_vr/agents/db_agent.py`: Agente para consultas SQL e integração LLM.
+- `ai_vr/agents/convencao_agent.py`: Aplica regras da convenção coletiva.
+- `ai_vr/agents/export_agent.py`: Consolida e exporta dados.
+- `ai_vr/scripts/generate_vr_planilha.py`: Gera base de cálculo e exportação.
+- `ai_vr/scripts/database_populate.py`: Popula o banco a partir das planilhas.
+- `ai_vr/scripts/database_backup.py`: Backup/restauração do banco.
+- `ai_vr/db/database_schema.sql`: Schema completo do banco.
+- `ai_vr/db/vr_database.db`: Banco de dados SQLite.
+- `data/VR_MENSAL_GERADO.xlsx`: Planilha gerada.
 
 ## Instalação
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Configure as credenciais do provedor LLM (OpenAI compatível) via variáveis de ambiente, se necessário, para o agente SQL do LangChain.
-
 ## Uso
+
+Execute o orquestrador diretamente:
+
+```bash
+python3 -m ai_vr.core.processar
+```
+
+Ou utilize a função programaticamente:
+
 ```python
-from automation.processar import processar_beneficios
+from ai_vr.core.processar import processar_beneficios
 
 convencao = {
-    "valor_vr_diario_padrao": 37.5,
-    "percentual_desconto_colaborador": 0.2,
-    "percentual_custo_empresa": 0.8,
-    "limites": {"max_desconto": 400.0},
-    "excecoes": {
-        "por_categoria": {"ESTAGIARIO": {"excluir": True}},
-        "por_sindicato": {"SINDPD SP": {"valor_vr_diario": 40.0}}
-    }
+     "valor_vr_diario_padrao": 37.5,
+     "percentual_desconto_colaborador": 0.2,
+     "percentual_custo_empresa": 0.8,
+     "limites": {"max_desconto": 400.0},
+     "excecoes": {
+          "por_categoria": {"ESTAGIARIO": {"excluir": True}},
+          "por_sindicato": {"SINDPD SP": {"valor_vr_diario": 40.0}}
+     }
 }
 
 saida = processar_beneficios(
-    db_path="/home/andersonnascimento/develop/github/projects/ai_vr/vr_database.db",
-    convencao_json=json.dumps(convencao),
-    output_planilha="/home/andersonnascimento/develop/github/projects/ai_vr/data/VR_MENSAL_GERADO.xlsx",
+     db_path="ai_vr/db/vr_database.db",
+     convencao_json=json.dumps(convencao),
+     output_planilha="data/VR_MENSAL_GERADO.xlsx",
 )
 print("Gerado em:", saida)
 ```
 
-Ou rode o módulo diretamente (usa um exemplo de convenção):
-```bash
-python3 -m automation.processar
-```
-
 ## Observações
+
 - A coluna `data_admissao` em `colaboradores` é sincronizada a partir de `admissoes` durante a população do banco.
 - A exportação usa a função `salvar_planilha` do script existente; não é criada a aba "Validações".
+- O projeto pode ser executado em modo offline (sem LLM) usando apenas o ExportAgent.
 
-## Compatibilidade e mudanças recentes
-Durante manutenção foi ajustado o import do cliente ChatOpenAI para a implementação recomentada.
+## Integração com LLM (LangChain/OpenAI)
 
-- O arquivo `automation/agents/db_agent.py` agora importa `ChatOpenAI` de `langchain_openai` (em vez de `langchain` ou `langchain_community`).
-- Para garantir compatibilidade, instale as dependências adicionais no ambiente virtual:
+- Configure a variável de ambiente `OPENAI_API_KEY` (ou crie um arquivo `.env` com essa variável).
+- O DatabaseAgent utiliza essa chave para inicializar o cliente LLM.
+- A execução do orquestrador pode consumir tokens/custos na conta associada à chave.
 
-```bash
-source .venv/bin/activate
-pip install openai langchain-openai
-```
+## Segurança e Customização
 
-Observação: ao atualizar `langchain`/`langchain-core` e pacotes relacionados, podem ocorrer avisos de compatibilidade entre versões (pydantic/langsmith/langchain-core). Se você preferir evitar atualizações grandes, pode reverter o import para `langchain_community.chat_models.ChatOpenAI` e manter as versões antigas:
+- O projeto permite ajustes dinâmicos nas regras de convenção coletiva via JSON.
+- Testes locais podem ser feitos sem LLM.
+- Para evitar inicialização do DatabaseAgent sem chave, pode-se adicionar modo "offline" ou flag CLI.
 
-```bash
-# Reverter código (exemplo):
-# from langchain_openai import ChatOpenAI
-# ->
-# from langchain_community.chat_models import ChatOpenAI
-
-# Se trocar o import, mantenha as versões originais listadas em requirements.txt
-```
-
-Uso da chave do provedor LLM
-- Configure a variável de ambiente `OPENAI_API_KEY` (ou crie um arquivo `.env` com essa variável). O orquestrador e `DatabaseAgent` usam essa chave para inicializar o cliente.
-
-Exemplo mínimo (shell zsh):
-
-```bash
-# carregar .env (opcional se já setada)
-set -a && source .env && set +a
-
-# rodar orquestrador (gera planilha e usa o LLM)
-python -m automation.processar
-```
-
-Segurança e custo
-- A execução do orquestrador chama o LLM e pode consumir tokens/custos na conta associada à `OPENAI_API_KEY`. Testes locais sem LLM podem ser feitos usando apenas o `ExportAgent` (não exige chave).
-
-Notas para desenvolvedores
-- Se preferir que o projeto não inicialize o `DatabaseAgent` quando a chave não estiver presente, podemos adicionar um modo "offline" ou um flag CLI em `automation/processar.py`.
+---
+Projeto desenvolvido para automação, validação e exportação de benefícios VR/VA com máxima flexibilidade e integração inteligente.
 

@@ -10,7 +10,7 @@ from datetime import datetime
 import zipfile
 
 class VRDatabaseBackup:
-    def __init__(self, db_path="vr_database.db"):
+    def __init__(self, db_path="ai_vr/db/vr_database.db"):
         """Inicializa o sistema de backup"""
         self.db_path = db_path
         self.backup_dir = "backups"

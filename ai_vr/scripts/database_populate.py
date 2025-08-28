@@ -14,7 +14,7 @@ class VRDatabase:
         
     def create_schema(self):
         """Cria o schema do banco de dados"""
-        with open('database_schema.sql', 'r') as f:
+        with open('ai_vr/db/database_schema.sql', 'r') as f:
             schema = f.read()
         self.cursor.executescript(schema)
         self.conn.commit()
