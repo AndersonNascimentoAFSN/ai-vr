@@ -47,11 +47,10 @@ class ConvencaoAgent:
 		# Ajuste de valor por sindicato, se houver
 		mapa_por_sindicato = (excecoes.get("por_sindicato", {}) or {})
 		df["VALOR DIÁRIO VR"] = df.get("VALOR DIÁRIO VR", pd.Series([valor_padrao] * len(df)))
-		df["VALOR DIÁRIO VR"] = df.apply(
-			lambda r: mapa_por_sindicato.get(str(r.get("Sindicato do Colaborador")), {}).get(
-				"valor_vr_diario", r["VALOR DIÁRIO VR"]
-			), axis=1
-		)
+		# Usa sempre o valor do banco de dados
+		# Não adiciona coluna extra, mantém apenas 'VALOR DIÁRIO VR'
+		if "valor_vr_diario" in df.columns:
+			df = df.drop(columns=["valor_vr_diario"])
 		# Substituir zeros pelo padrão
 		df["VALOR DIÁRIO VR"] = df["VALOR DIÁRIO VR"].fillna(0).astype(float)
 		df.loc[df["VALOR DIÁRIO VR"] <= 0, "VALOR DIÁRIO VR"] = valor_padrao

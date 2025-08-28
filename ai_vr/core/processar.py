@@ -6,6 +6,11 @@ import json
 import pandas as pd
 import os
 import subprocess
+try:
+	from dotenv import load_dotenv
+	load_dotenv()
+except ImportError:
+	pass
 
 from ai_vr.scripts.generate_vr_planilha import PeriodoReferencia
 from ai_vr.agents.db_agent import DatabaseAgent
@@ -76,8 +81,7 @@ if __name__ == "__main__":
 		"percentual_custo_empresa": 0.8,
 		"limites": {"max_desconto": 400.0},
 		"excecoes": {
-			"por_categoria": {"ESTAGIARIO": {"excluir": True}},
-			"por_sindicato": {"SINDPD SP": {"valor_vr_diario": 40.0}}
+			"por_categoria": {"ESTAGIARIO": {"excluir": True}}
 		}
 	})
 
