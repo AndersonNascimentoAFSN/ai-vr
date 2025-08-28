@@ -1,0 +1,7 @@
+pandas==2.2.2
+openpyxl==3.1.5
+sqlalchemy==2.0.32
+langchain==0.2.12
+langchain-community==0.2.10
+pyyaml==6.0.2
+pydantic==2.8.2
