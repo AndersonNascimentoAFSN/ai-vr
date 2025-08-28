@@ -8,8 +8,10 @@ pyyaml==6.0.2
 pydantic==2.8.2
 numpy==1.26.4
 
+
 # Utilitários usados em scripts
 python-dateutil>=2.8.2
+python-dotenv>=1.0.1
 
 # Dependências para agentes e integração com OpenAI
 langchain-openai==0.1.7
