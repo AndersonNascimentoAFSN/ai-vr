@@ -17,3 +17,6 @@ data/VR_MENSAL_GERADO*.xlsx
 
 # Backups (opcional)
 backups/
+
+# SQLite database files (opcional)
+ai_vr/db/*.db
